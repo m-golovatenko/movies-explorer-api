@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { regex, WRONG_URL } = require('../utils/constants');
+const { default: isURL } = require('validator/lib/isURL');
+const { WRONG_URL } = require('../utils/constants');
 
 const movieSchema = new mongoose.Schema({
   country: {
@@ -26,7 +27,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле "image" должно быть заполнено'],
     validate: {
-      validator: (v) => { regex.test(v); },
+      validator: (v) => isURL(v),
       message: WRONG_URL,
     },
   },
@@ -34,7 +35,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле "trailerLink" должно быть заполнено'],
     validate: {
-      validator: (v) => { regex.test(v); },
+      validator: (v) => isURL(v),
       message: WRONG_URL,
     },
   },
@@ -42,7 +43,7 @@ const movieSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Поле "thumbnail" должно быть заполнено'],
     validate: {
-      validator: (v) => { regex.test(v); },
+      validator: (v) => isURL(v),
       message: WRONG_URL,
     },
   },

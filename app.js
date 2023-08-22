@@ -6,11 +6,12 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
 
-const limiter = require('./middlewares/rate-limit');
+const rateLimiter = require('./middlewares/rate-limit');
 const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { devUrl } = require('./utils/config');
 
-const { PORT, DB_URL } = process.env;
+const { PORT, DB_URL, NODE_ENV } = process.env;
 
 const app = express();
 app.use(cors({
@@ -19,7 +20,7 @@ app.use(cors({
 }));
 
 app.use(requestLogger);
-app.use(limiter);
+app.use(rateLimiter);
 
 app.use(bodyParser.json());
 app.use(helmet());
@@ -31,7 +32,7 @@ app.use(errors());
 app.use(errorHandler);
 
 mongoose
-  .connect(DB_URL, {
+  .connect(NODE_ENV === 'production' ? DB_URL : devUrl, {
     useNewUrlParser: true,
   })
   .then(() => {
