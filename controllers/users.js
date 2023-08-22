@@ -7,7 +7,16 @@ const NotFoundError = require('../errors/NotFoundError');
 const WrongDataError = require('../errors/WrongDataError');
 const UserAlreadyExistError = require('../errors/UserAlreadyExistError');
 const AuthorizationError = require('../errors/AuthorizationError');
-const { SUCCESS_CODE, SUCCESS_CREATE_CODE } = require('../utils/constants');
+const {
+  SUCCESS_CODE,
+  SUCCESS_CREATE_CODE,
+  USER_NOT_FOUND,
+  USER_SEARCH_WRONG_DATA,
+  USER_CHANGE_WRONG_DATA,
+  USER_CREATE_WRONG_DATA,
+  USER_ALREADY_EXIST,
+  USER_DOES_NOT_EXIST,
+} = require('../utils/constants');
 
 module.exports.getCurrentUser = (req, res, next) => {
   const currentUserId = req.user._id;
@@ -15,13 +24,13 @@ module.exports.getCurrentUser = (req, res, next) => {
   User.findById(currentUserId)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new NotFoundError(USER_NOT_FOUND);
       }
       res.status(SUCCESS_CODE).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new WrongDataError('Переданы некорректные данные при поиске пользователя.'));
+        next(new WrongDataError(USER_SEARCH_WRONG_DATA));
         return;
       }
 
@@ -38,11 +47,11 @@ module.exports.changeProfile = (req, res, next) => {
     .then((user) => res.status(SUCCESS_CODE).send(user))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
-        next(new NotFoundError('Пользователь с указанным _id не найден.'));
+        next(new NotFoundError(USER_NOT_FOUND));
         return;
       }
       if (err.name === 'ValidationError') {
-        next(new WrongDataError('Переданы некорректные данные при изменении данных пользователя.'));
+        next(new WrongDataError(USER_CHANGE_WRONG_DATA));
         return;
       }
       next(err);
@@ -63,11 +72,11 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new WrongDataError('Переданы некорректные данные при создании пользователя.'));
+        next(new WrongDataError(USER_CREATE_WRONG_DATA));
         return;
       }
       if (err.code === 11000) {
-        next(new UserAlreadyExistError('Пользователь уже существует.'));
+        next(new UserAlreadyExistError(USER_ALREADY_EXIST));
         return;
       }
       next(err);
@@ -84,7 +93,7 @@ module.exports.login = (req, res, next) => {
       });
     })
     .catch((err) => {
-      next(new AuthorizationError('Такого пользователя не существует'));
+      next(new AuthorizationError(USER_DOES_NOT_EXIST));
       next(err);
     });
 };

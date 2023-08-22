@@ -3,7 +3,9 @@ const NotFoundError = require('../errors/NotFoundError');
 const WrongDataError = require('../errors/WrongDataError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-const { SUCCESS_CODE, SUCCESS_CREATE_CODE } = require('../utils/constants');
+const {
+  SUCCESS_CODE, SUCCESS_CREATE_CODE, MOVIE_CREATE_WRONG_DATA, MOVIE_NOT_FOUND, FORBIDDEN_ERROR, MOVIE_DELETE_WRONG_DATA,
+} = require('../utils/constants');
 
 module.exports.getSavedMovies = (req, res, next) => {
   Movie.find({})
@@ -23,7 +25,7 @@ module.exports.createMovie = (req, res, next) => {
     .then((movie) => res.status(SUCCESS_CREATE_CODE).send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new WrongDataError('Переданы некорректные данные при создании карточки.'));
+        next(new WrongDataError(MOVIE_CREATE_WRONG_DATA));
         return;
       }
       next(err);
@@ -36,7 +38,7 @@ module.exports.deleteSavedMovie = (req, res, next) => {
 
   Movie.findById(movieId)
     .orFail(() => {
-      throw new NotFoundError('Карточка с указанным _id не найдена.');
+      throw new NotFoundError(MOVIE_NOT_FOUND);
     })
     .then((movie) => {
       if (String(movie.owner) === String(owner)) {
@@ -44,12 +46,12 @@ module.exports.deleteSavedMovie = (req, res, next) => {
           .then(() => res.status(SUCCESS_CODE).send(movie))
           .catch(next);
       } else {
-        throw new ForbiddenError('Не ваша карточка.');
+        throw new ForbiddenError(FORBIDDEN_ERROR);
       }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new WrongDataError('Переданы некорректные данные карточки при удалении.'));
+        next(new WrongDataError(MOVIE_DELETE_WRONG_DATA));
         return;
       }
       next(err);
