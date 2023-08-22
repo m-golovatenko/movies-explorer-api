@@ -13,6 +13,7 @@ const FORBIDDEN_ERROR = 'Не ваш фильм.';
 const MOVIE_DELETE_WRONG_DATA = 'Переданы некорректные данные фильма при удалении.';
 const AUTHORIZATION_NEEDED = 'Необходима авторизация.';
 const PAGE_NOT_FOUND = 'Страница по указанному маршруту не найдена.';
+const WRONG_URL = 'Некорректный URL.';
 
 const regex = /^(https?:\/\/)?(www\.)?[A-Za-z0-9-[\].]+[A-Za-z0-9-[\]/]{2,}([A-Za-z0-9-._~:?#[\]@!$&'()*+,;=?%]*)?$/;
 
@@ -32,4 +33,5 @@ module.exports = {
   MOVIE_DELETE_WRONG_DATA,
   AUTHORIZATION_NEEDED,
   PAGE_NOT_FOUND,
+  WRONG_URL,
 };
