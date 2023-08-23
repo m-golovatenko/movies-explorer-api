@@ -6,10 +6,9 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('cors');
 
-const rateLimiter = require('./middlewares/rate-limit');
 const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { devUrl } = require('./utils/config');
+const { devUrl, limiter } = require('./utils/config');
 
 const { PORT, DB_URL, NODE_ENV } = process.env;
 
@@ -20,7 +19,7 @@ app.use(cors({
 }));
 
 app.use(requestLogger);
-app.use(rateLimiter);
+app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(helmet());
