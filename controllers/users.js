@@ -54,6 +54,10 @@ module.exports.changeProfile = (req, res, next) => {
         next(new WrongDataError(USER_CHANGE_WRONG_DATA));
         return;
       }
+      if (err.code === 11000) {
+        next(new UserAlreadyExistError(USER_ALREADY_EXIST));
+        return;
+      }
       next(err);
     });
 };
